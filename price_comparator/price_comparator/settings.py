@@ -88,7 +88,7 @@ DATABASES = {
         'USER': 'root',
         'PASSWORD': 'smallVQ123@qq.com',
         'HOST': '39.107.228.156',
-        'PORT': '3306',
+        'PORT': '8905',
     }
 }
 
