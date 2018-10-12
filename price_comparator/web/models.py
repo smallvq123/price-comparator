@@ -10,7 +10,8 @@ class Goods(models.Model):
     g_url = models.CharField(max_length=2048, verbose_name=('商品链接'))  #
     g_from_choices = (
         (1, "淘宝"),
-        (2, "其他（暂未支持）"),
+        (2, "天猫"),
+        (3, "其他（暂未支持）"),
     )
     g_from = models.IntegerField(choices=g_from_choices, default=1, verbose_name=('商品来源'))  #  1，taobao
     g_name = models.CharField(max_length=256, verbose_name=('名称'), null=True, blank=True, default='')  # 商品名称
@@ -19,6 +20,7 @@ class Goods(models.Model):
     needs_update = models.BooleanField(verbose_name=('是否需要更新'))  # 是否需要更新
     stock = models.IntegerField('库存', null=True, default=-1)  # 库存剩余
     status_choices = (
+        (-2, "下架"),
         (-1, "停止更新"),
         (1, "正常更新"),
     )
