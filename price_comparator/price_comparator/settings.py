@@ -128,5 +128,5 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 CRONJOBS = [
-    ('*/1 * * * *', 'spider.spider_main.run_program', '>>./test.log')
+    ('*/1 * * * *', 'spider.spider_main.run_program', '>>./logs/spider/spider.log')
 ]
