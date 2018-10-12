@@ -3,3 +3,4 @@
 /venv/
 /target/
 /*.iml
+*.pyc
