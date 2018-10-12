@@ -84,8 +84,8 @@ DATABASES = {
         'NAME': 'price_comparator',
         'USER': 'root',
         'PASSWORD': 'smallVQ123@qq.com',
-         'HOST': '39.107.228.156',
-        # 'HOST': 'localhost',
+    #     'HOST': '39.107.228.156',
+        'HOST': 'localhost',
         'PORT': '8905',
     }
 }
