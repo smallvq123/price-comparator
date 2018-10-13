@@ -1,6 +1,17 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+import logging
 
-from django.shortcuts import render
+from django.core import serializers
+from django.http import JsonResponse
 
-# Create your views here.
+
+
+from models import Goods
+from spider import spider_main
+
+
+
+def test(request):
+    logging.info(1111)
+    spider_main.run_program()
+    return JsonResponse('success', safe=False)

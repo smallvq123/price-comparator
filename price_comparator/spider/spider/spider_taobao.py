@@ -1,65 +1,76 @@
 # -*- coding=utf-8 -*-
-
+import logging
 import re
+import traceback
 import urllib2
 
-def spider_taobao(url):
 
-    headers = {
-        'Accept':'application/json, text/plain, */*',
-        'Accept-Language':'zh-CN,zh;q=0.3',
-        'Referer':'https://item.taobao.com/item.htm',
-        'User-Agent':'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36',
-        'Connection':'keep-alive',
-    }
+class Spider4taobao:
+    def __init__(self):
+        pass
 
-    goods_id = re.findall('id=(\d+)', url)[0]
+    @staticmethod
+    def spider(goods):
+        url = goods.g_url
+        headers = {
+            'Accept': 'application/json, text/plain, */*',
+            'Accept-Language': 'zh-CN,zh;q=0.3',
+            'Referer': 'https://item.taobao.com/item.htm',
+            'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36',
+            'Connection': 'keep-alive',
+        }
 
-    try:
-        req = urllib2.Request(url=url, headers=headers)
-        res = urllib2.urlopen(req).read().decode('gbk', 'ignore')
-    except Exception as e:
-        print '无法打开网页:', e.reason
+        goods_id = re.findall('id=(\d+)', url)[0]
 
-    try:
-        title = re.findall('<h3 class="tb-main-title" data-title="(.*?)"', res)
-        title = title[0] if title else None
-        line_price = re.findall('<em class="tb-rmb-num">(.*?)</em>', res)[0]
+        try:
+            req = urllib2.Request(url=url, headers=headers)
+            res = urllib2.urlopen(req).read().decode('gbk', 'ignore')
+        except Exception as e:
+            print '无法打开网页:', e.reason
 
-        # 30-42行为抓取淘宝商品真实价格，该数据是动态加载的
-        purl = "https://detailskip.taobao.com/service/getData/1/p1/item/detail/sib.htm?itemId={}&modules=price,xmpPromotion".format(goods_id)
+        try:
+            title = re.findall('<h3 class="tb-main-title" data-title="(.*?)"', res)
+            title = title[0] if title else None
+            line_price = re.findall('<em class="tb-rmb-num">(.*?)</em>', res)[0]
 
-        price_req = urllib2.Request(url=purl, headers=headers)
-        price_res = urllib2.urlopen(price_req).read()
-        data = list(set(re.findall('"price":"(.*?)"', price_res)))
-        # data列表中的价格可能是定值与区间的组合，也可能只是定值，而且不一定有序
-        real_price = ""
-        for t in data:
-            if '-' in t:
-                real_price = t
-                break
-        if not real_price:
-            real_price = sorted(map(float, data))[0]
+            # 30-42行为抓取淘宝商品真实价格，该数据是动态加载的
+            purl = "https://detailskip.taobao.com/service/getData/1/p1/item/detail/sib.htm?itemId={}&modules=dynStock,price,xmpPromotion".format(
+                goods_id)
 
-        # 45-53行为抓取评论数据，该数据也是动态加载的
-        comment_url = "https://rate.tmall.com/list_detail_rate.htm?itemId={}&sellerId=880734502&currentPage=1".format(goods_id)
-        comment_data = urllib2.urlopen(comment_url).read().decode("GBK", "ignore")
-        temp_data = re.findall('("commentTime":.*?),"days"', comment_data)
-        temp_data = temp_data if temp_data else re.findall('("rateContent":.*?),"reply"', comment_data)
-        comment = ""
-        for data in temp_data:
-            comment += data.encode('utf-8')
-        comment = comment if comment else "暂无评论"
-    except Exception as e:
-        print '数据抽取失败!!!'
+            price_req = urllib2.Request(url=purl, headers=headers)
+            price_res = urllib2.urlopen(price_req).read()
+            real_price = re.findall('"price":"(.*?)"', price_res)[0]
+            real_stock = re.findall('"stock":(.*?)}', price_res)[0]
+            # 45-53行为抓取评论数据，该数据也是动态加载的
+            # comment_url = "https://rate.tmall.com/list_detail_rate.htm?itemId={}&sellerId=880734502&currentPage=1".format(
+            #     goods_id)
+            # comment_data = urllib2.urlopen(comment_url).read().decode("GBK", "ignore")
+            # temp_data = re.findall('("commentTime":.*?),"days"', comment_data)
+            # temp_data = temp_data if temp_data else re.findall('("rateContent":.*?),"reply"', comment_data)
+            # comment = ""
+            # for data in temp_data:
+            #     comment += data.encode('utf-8')
+            # comment = comment if comment else "暂无评论"
+        except Exception as e:
+            exstr = traceback.format_exc()
+            print exstr
+            logging.error('数据抽取失败!!! url: %s' % url)
+            return False
 
-    print '商品名:', title
-    print '划线价格:', line_price
-    print '真实价格:', real_price
-    print '商品链接:', url
-    print '部分评论内容:', comment
+        # logging.info('商品名: %s ; 库存: {} ; 划线价格: {} ; 真实价格: {} ; 商品链接: {}'.format(title, real_stock,
+        #                                                                         line_price, real_price, url))
 
-# if __name__ == '__main__':
-    #url = 'https://item.taobao.com/item.htm?spm=a230r.1.14.30.43306a3fOeuZ0B&id=553787375606&ns=1&abbucket=10#detail'
+        goods.g_name = title
+        goods.price_lasted = real_price
+        goods.stock = real_stock
+        return goods
+
+
+if __name__ == '__main__':
+    # url = 'https://item.taobao.com/item.htm?spm=a230r.1.14.30.43306a3fOeuZ0B&id=553787375606&ns=1&abbucket=10#detail'
     # url = raw_input("请输入商品链接: ")
     # spider_taobao(url)
+    response = '({"code":{"code":0,"message":"SUCCESS"},"data":{"viewer":{"admin":false,"bs":"145","buyDomain":"buy.taobao.com","buyerId":"352395053","cartDomain":"cart.taobao.com","cc":false,"countryCode":"CN","ctUser":false,"lgin":true,"serviceTab":"ITEM","tkn":"ee753b7e838ee"},"deliveryFee":{"data":{"areaId":110101,"areaName":"\u5317\u4EAC\u4E1C\u57CE\u533A","sendCity":"\u5E7F\u4E1C\u6C55\u5934","serviceInfo":{"list":[{"id":"100_-4","info":"\u5FEB\u9012 <span class=\"wl-yen\">&yen;<\/span>10.00","isDefault":true},{"id":"100_-7","info":"EMS <span class=\"wl-yen\">&yen;<\/span>20.00"}]}},"dataUrl":"\/\/detailskip.taobao.com\/json\/deliveryFee.htm","message":"ok","success":true},"activity":{},"originalPrice":{"def":{"price":"9.80"},";1627207:28320;":{"price":"9.80"}},"price":"9.80","tradeContract":{"pay":[{"icons":["\/\/img.alicdn.com\/tfs\/TB1KTHfQFXXXXbnXFXXXXXXXXXX-16-16.png","\/\/img.alicdn.com\/tfs\/TB1XeDvQFXXXXc5XXXXXXXXXXXX-32-32.png"],"title":"\u8682\u8681\u82B1\u5457","url":"\/\/payservice.alipay.com\/intro\/index.htm?c=hb"},{"icons":["\/\/img.alicdn.com\/tfs\/TB1w6O3QFXXXXX4aXXXXXXXXXXX-16-16.png","\/\/img.alicdn.com\/tfs\/TB1c7HAQFXXXXakXXXXXXXXXXXX-32-32.png"],"title":"\u4FE1\u7528\u5361\u652F\u4ED8","url":"\/\/payservice.alipay.com\/intro\/index.htm?c=xyk"},{"icons":["\/\/img.alicdn.com\/tfs\/TB1dvGWQFXXXXcFaXXXXXXXXXXX-16-16.png","\/\/img.alicdn.com\/tfs\/TB1FdDlQFXXXXa5XpXXXXXXXXXX-32-32.png"],"title":"\u96C6\u5206\u5B9D","url":"\/\/jf.alipay.com"}],"service":[{"desc":"\u5546\u54C1\u5728\u8FD0\u8F93\u9014\u4E2D\u51FA\u73B0\u7834\u635F\u7684\uFF0C\u6D88\u8D39\u8005\u53EF\u5411\u5356\u5BB6\u63D0\u51FA\u8865\u5BC4\u7533\u8BF7\uFF0C\u53EF\u8865\u5BC41\u6B21\uFF0C\u8865\u5BC4\u90AE\u8D39\u7531\u5356\u5BB6\u627F\u62C5","icons":["\/\/img.alicdn.com\/tps\/i1\/TB1skruGpXXXXagXFXXAz6UFXXX-16-16.png",null],"linkType":1,"title":"1\u6B21\u7834\u635F\u8865\u5BC4"},{"desc":"\u6EE1\u8DB37\u5929\u65E0\u7406\u7531\u9000\u6362\u8D27\u7533\u8BF7\u7684\u524D\u63D0\u4E0B\uFF0C\u5305\u90AE\u5546\u54C1\u9700\u8981\u4E70\u5BB6\u627F\u62C5\u9000\u8D27\u90AE\u8D39\uFF0C\u975E\u5305\u90AE\u5546\u54C1\u9700\u8981\u4E70\u5BB6\u627F\u62C5\u53D1\u8D27\u548C\u9000\u8D27\u90AE\u8D39\u3002","icons":["\/\/img.alicdn.com\/tps\/i1\/T1EQA5FpVgXXceOP_X-16-16.jpg",null],"linkType":1,"title":"7\u5929\u65E0\u7406\u7531"}]},"dynStock":{"holdQuantity":0,"sellableQuantity":2676,"sku":{";1627207:28320;":{"holdQuantity":0,"oversold":false,"sellableQuantity":2676,"stock":2676}},"stock":2676,"stockType":"normal"},"qrcodeImgUrl":"\/\/gcodex.alicdn.com\/qrcode.do?biz_code=xcode&short_name=a.ZRs8&cmd=createSub&param=id:566923463991;scm:20140619.pc_detail.itemId.0","couponActivity":{"buyerHasMianxi":false,"coupon":{},"shopProm":[{"icon":["\/\/img.alicdn.com\/tfs\/TB1Kz8VQFXXXXa6XFXXXXXXXXXX-56-16.png","\/\/img.alicdn.com\/tfs\/TB1CDp8QFXXXXakXpXXXXXXXXXX-112-32.png"],"title":"\u6EE1150,\u4EAB\u90E8\u5206\u5730\u533A\u5305\u90AE"}],"showMianxiTips":false},"soldQuantity":{"confirmGoodsCount":"1298","soldTotalCount":"1760"},"promotion":{"promoData":{},"saleDetailMap":{}}}});'
+    real_price = re.findall('"price":"(.*?)"', response)[0]
+    real_stock = re.findall('"stock":(.*?)}', response)[0]
+    print real_price, real_stock
