@@ -17,8 +17,12 @@ class Processer:
     def __needs_update(self, goods):
         if goods.stock < 10:
             goods.needs_update = True
+        else:
+            goods.needs_update = False
         if goods.price_lasted != goods.price_moniter:
             goods.needs_update = True
+        else:
+            goods.needs_update = False
         goods.save()
 
     # 处理传入goods对象
