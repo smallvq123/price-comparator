@@ -24,9 +24,16 @@ class Goods(models.Model):
         (-1, "停止更新"),
         (1, "正常更新"),
     )
-    status = models.IntegerField(choices=status_choices, default=1, verbose_name=('监控状态'))  # 商品状态 ： -1，停止更新；1，正常更新；
+    status = models.IntegerField(choices=status_choices, default=1, verbose_name=('监控状态'))
     date_created = models.DateTimeField('date created', auto_now_add=True, null=True)
     date_updated = models.DateTimeField('date updated', auto_now=True, null=True)
     category = models.CharField('分类', max_length=256, null=True, blank=True)
+
+    def invalid_goods(self):
+        self.needs_update = True
+        self.price_lasted = -1
+        self.stock = -1
+        self.status = -2
+
     def __str__(self):
         return '{0.g_name}({0.g_url})'.format(self)

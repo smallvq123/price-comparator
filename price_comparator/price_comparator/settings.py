@@ -93,8 +93,8 @@ DATABASES = {
         'NAME': 'price_comparator',
         'USER': 'root',
         'PASSWORD': 'smallVQ123@qq.com',
-    #     'HOST': '39.107.228.156',
-        'HOST': 'localhost',
+        'HOST': '39.107.228.156',
+        # 'HOST': 'localhost',
         'PORT': '8905',
     }
 }
@@ -119,6 +119,9 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
+# admin support utf
+reload(sys)
+sys.setdefaultencoding("utf8")
 
 #TIME_ZONE = 'UTC'
 LANGUAGE_CODE = 'zh-hans'
