@@ -84,14 +84,18 @@ class Spider4tmall:
 
     @staticmethod
     def get_real_price(price_info, sku_id):
-        real_price_promotionList = price_info[sku_id]['promotionList']
+        real_price_promotionlist = None
+        if 'promotionList' in price_info[sku_id]:
+            real_price_promotionlist = price_info[sku_id]['promotionList']
+        if 'suggestivePromotionList' in price_info[sku_id]:
+            real_price_promotionlist = price_info[sku_id]['suggestivePromotionList']
         try:
             wrt_info = price_info[sku_id]['wrtInfo']
         except:
             wrt_info = None
-        if real_price_promotionList:
+        if real_price_promotionlist:
             # 登陆后有优惠政策
-            real_price = real_price_promotionList[0]['price']
+            real_price = real_price_promotionlist[0]['price']
         else:
             real_price = price_info[sku_id]['price']
         if wrt_info:
