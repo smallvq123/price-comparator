@@ -35,17 +35,23 @@ class Processer:
     # 处理传入goods对象
     def process(self, goods_list):
         goods_count = 0
+        error_count = 0
         for goods in goods_list:
-            if goods.g_url == None:
-                logging.error('商品url为None goodsid: %s' % str(goods.id))
-                continue
-            spider_func = AbstractSpider.getSpider(goods.g_from)
-            goods = spider_func(goods)
-            if goods:
-                # 判断是否需要更新
-                self.__needs_update(goods)
+            try:
+                if goods.g_url == None:
+                    logging.error('商品url为None goodsid: %s' % str(goods.id))
+                    continue
+                spider_func = AbstractSpider.getSpider(goods.g_from)
+                goods = spider_func(goods)
+                if goods:
+                    # 判断是否需要更新
+                    self.__needs_update(goods)
+                    goods_count += 1
+                else:
+                    error_count += 1
+            except:
+                error_count += 1
             # 随机睡 1~10s TODO 提取工具类
-            random_sleep_sec = random.randint(1, 4)
+            random_sleep_sec = random.randint(3, 20)
             time.sleep(random_sleep_sec)
-            goods_count += 1
-            logging.info('finished : {}'.format(goods_count))
+            logging.info('error:{}  ;  success:{} ; now_goods_id:{}'.format(error_count, goods_count, goods.id))

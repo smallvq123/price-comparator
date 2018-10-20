@@ -12,7 +12,6 @@ def run_program(status_min, status_max):
         status_min = 1
         status_max = 1
     # 拉取全部商品 TODO 分页
-    print("spider_starting ====")
     logging.info("spider_starting ====")
     goods_list = Mysql_inputer.get_input(status_min, status_max)
     # 调用processer进行处理
