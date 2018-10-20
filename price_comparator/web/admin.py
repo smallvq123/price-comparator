@@ -16,11 +16,11 @@ def enable_needs_update(modeladmin, request, queryset):
 
 class GoodsAdmin(admin.ModelAdmin):
     list_display = (
-        'id', 'g_name', 'needs_update',  'g_from', 'price_lasted', 'price_moniter', 'stock', 'status',
-        'date_created', 'date_updated', 'g_url','category')
+        'id','g_custom_name', 'needs_update',  'g_from', 'price_lasted', 'price_moniter', 'stock', 'status',
+        'date_created', 'date_updated', 'g_url', 'g_name','category')
     list_display_links = ('id', 'g_name')
     list_filter = ('g_from', 'needs_update', 'status')
-    search_fields = ['g_name', 'g_url']
+    search_fields = ['g_name', 'g_url', 'g_custom_name']
     actions = [disable_needs_update, enable_needs_update]
 
 

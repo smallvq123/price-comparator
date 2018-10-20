@@ -14,7 +14,8 @@ class Goods(models.Model):
         (3, "其他（暂未支持）"),
     )
     g_from = models.IntegerField(choices=g_from_choices, default=1, verbose_name=('商品来源'))  #  1，taobao
-    g_name = models.CharField(max_length=256, verbose_name=('名称'), null=True, blank=True, default='')  # 商品名称
+    g_name = models.CharField(max_length=256, verbose_name=('名称-抓取'), null=True, blank=True, default='')  # 商品名称
+    g_custom_name = models.CharField(max_length=256, verbose_name=('名称-定义'), null=True, blank=True, default='') # 用户自定义名称
     price_lasted = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=('最新官网价'), null=True, blank=True)  # 商品最新价格
     price_moniter = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=('监控价格'), null=True, blank=True)  # 监控价格 当最新价格不一致时 needs_update变成true
     needs_update = models.BooleanField(verbose_name=('是否需要更新'), default=False)  # 是否需要更新

@@ -1,5 +1,6 @@
 # -*- coding=utf-8 -*-
 import decimal
+import logging
 import random
 import time
 
@@ -19,7 +20,7 @@ class AbstractSpider():
 class Processer:
 
     def __needs_update(self, goods):
-        if goods.stock < 10:
+        if goods.stock < 50:
             goods.needs_update = True
         elif (goods.price_moniter == None):
             goods.needs_update = True
@@ -33,12 +34,18 @@ class Processer:
 
     # 处理传入goods对象
     def process(self, goods_list):
+        goods_count = 0
         for goods in goods_list:
+            if goods.g_url == None:
+                logging.error('商品url为None goodsid: %s' % str(goods.id))
+                continue
             spider_func = AbstractSpider.getSpider(goods.g_from)
             goods = spider_func(goods)
-            # 随机睡 1~10s TODO 提取工具类
-            random_sleep_sec = random.randint(1, 10)
-            time.sleep(random_sleep_sec)
             if goods:
                 # 判断是否需要更新
                 self.__needs_update(goods)
+            # 随机睡 1~10s TODO 提取工具类
+            random_sleep_sec = random.randint(1, 4)
+            time.sleep(random_sleep_sec)
+            goods_count += 1
+            logging.info('finished : {}'.format(goods_count))

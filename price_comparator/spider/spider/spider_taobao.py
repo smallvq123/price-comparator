@@ -21,6 +21,7 @@ class Spider4taobao:
             res = urllib2.urlopen(req).read().decode('gbk', 'ignore')
         except Exception as e:
             print '无法打开网页:', e.reason
+            return False
 
         try:
             title = re.findall('<h3 class="tb-main-title" data-title="(.*?)"', res)
@@ -41,7 +42,7 @@ class Spider4taobao:
             price_req = urllib2.Request(url=purl, headers=headers4spider.header_taobao)
             price_res = urllib2.urlopen(price_req).read()
             real_price = re.findall('"price":"(.*?)"', price_res)
-            real_price = real_price[0] if real_price else None
+            real_price = real_price[real_price.__len__()-1] if real_price else None
             real_stock = re.findall('"stock":(.*?)}', price_res)
             real_stock = real_stock[0] if real_stock else None
             logging.info(u'商品名: {} ; 库存: {} ; 划线价格: {} ; 真实价格: {} ; 商品链接: {}'.format(title, real_stock,

@@ -13,12 +13,13 @@ class Spider4tmall:
     def spider(goods):
         url = goods.g_url
         goods_id = re.findall('id=(\d+)', url)[0]
-        sku_id = re.findall('skuId=(\d+)', url)[0]
+
         try:
             req = urllib2.Request(url=url, headers=headers4spider.header_tmall_detail)
             res = urllib2.urlopen(req).read().decode('gbk', 'ignore')
         except Exception as e:
             print '无法打开网页:', e.reason
+            return False
 
         try:
             title = re.findall('"title":"(.*?)"', res)
@@ -41,14 +42,30 @@ class Spider4tmall:
                    "&isRegionLevel=false&household=false&sellerPreview=false" \
                    "&queryMemberRight=true&addressLevel=2&isForbidBuyItem=false&callback=setMdskip&callback=setMdskip&timestamp={}".format(
                 goods_id, timestamp)
+            sku_id = re.findall('skuId=(\d+)', url)
+            sku_id = sku_id[0] if sku_id else None
             price_req = urllib2.Request(url=purl, headers=headers4spider.headers_price_tmall)
             price_res = urllib2.urlopen(price_req).read()
             price_res = price_res.decode('UTF-8', 'ignore')
             response_json_reg = '\((.*?)\)'
             response_json_str = re.findall(response_json_reg, price_res)[0]
             response_json = json.loads(response_json_str)
-            real_price = response_json['defaultModel']['itemPriceResultDO']['priceInfo'][sku_id]['price']
-            real_stock = response_json['defaultModel']['inventoryDO']['skuQuantity'][sku_id]['quantity']
+
+            # 是否存在skuid
+            if sku_id:
+                real_stock = response_json['defaultModel']['inventoryDO']['icTotalQuantity'][sku_id]['quantity']
+            else:
+                sku_id = 'def'
+                real_stock = response_json['defaultModel']['inventoryDO']['icTotalQuantity']
+
+            real_price_promotionList = response_json['defaultModel']['itemPriceResultDO']['priceInfo'][sku_id][
+                'promotionList']
+            if real_price_promotionList:
+                # 登陆后有优惠政策
+                real_price = real_price_promotionList[0]['price']
+            else:
+                real_price = response_json['defaultModel']['itemPriceResultDO']['priceInfo'][sku_id]['price']
+
             logging.info(u'商品名: {} ; 库存: {} ; 划线价格: {} ; 真实价格: {} ; 商品链接: {}'.format(title, real_stock,
                                                                                      line_price, real_price, url))
         except Exception as e:

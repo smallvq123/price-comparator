@@ -123,7 +123,7 @@ AUTH_PASSWORD_VALIDATORS = [
 reload(sys)
 sys.setdefaultencoding("utf8")
 
-#TIME_ZONE = 'UTC'
+# TIME_ZONE = 'UTC'
 LANGUAGE_CODE = 'zh-hans'
 TIME_ZONE = 'Asia/Shanghai'
 USE_I18N = True
@@ -221,6 +221,11 @@ LOGGING = {
         'collect': {
             'handlers': ['console', 'collect'],
             'level': 'INFO',
-        }
+        },
+        'django.db.backends': {
+            'handlers': ['console', 'default'],
+            'propagate': True,
+            'level': 'DEBUG',
+        },
     }
 }

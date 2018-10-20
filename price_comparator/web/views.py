@@ -1,17 +1,13 @@
 # -*- coding: utf-8 -*-
 import logging
 
-from django.core import serializers
 from django.http import JsonResponse
 
-
-
-from models import Goods
 from spider import spider_main
 
 
-
 def test(request):
-    logging.info(1111)
-    spider_main.run_program()
+    status_min = request.GET.get('status_min')
+    status_max = request.GET.get('status_max')
+    spider_main.run_program(status_min, status_max)
     return JsonResponse('success', safe=False)
