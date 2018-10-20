@@ -51,20 +51,21 @@ class Spider4tmall:
             response_json_str = re.findall(response_json_reg, price_res)[0]
             response_json = json.loads(response_json_str)
 
-            # 是否存在skuid
+            # 是否存在skuid 取真实库存
             if sku_id:
-                real_stock = response_json['defaultModel']['inventoryDO']['icTotalQuantity'][sku_id]['quantity']
+                real_stock = response_json['defaultModel']['inventoryDO']['skuQuantity'][sku_id]['quantity']
             else:
-                sku_id = 'def'
                 real_stock = response_json['defaultModel']['inventoryDO']['icTotalQuantity']
 
-            real_price_promotionList = response_json['defaultModel']['itemPriceResultDO']['priceInfo'][sku_id][
-                'promotionList']
-            if real_price_promotionList:
-                # 登陆后有优惠政策
-                real_price = real_price_promotionList[0]['price']
+            # 取售价 3种情况 有skuid、无、有预售
+            price_info = response_json['defaultModel']['itemPriceResultDO']['priceInfo']
+            if sku_id:
+                real_price = Spider4tmall.get_real_price(price_info, sku_id)
             else:
-                real_price = response_json['defaultModel']['itemPriceResultDO']['priceInfo'][sku_id]['price']
+                for sku_id_dict in price_info:
+                    sku_id = sku_id_dict
+                    break
+                real_price = Spider4tmall.get_real_price(price_info, sku_id)
 
             logging.info(u'商品名: {} ; 库存: {} ; 划线价格: {} ; 真实价格: {} ; 商品链接: {}'.format(title, real_stock,
                                                                                      line_price, real_price, url))
@@ -80,6 +81,23 @@ class Spider4tmall:
 
     def __init__(self):
         pass
+
+    @staticmethod
+    def get_real_price(price_info, sku_id):
+        real_price_promotionList = price_info[sku_id]['promotionList']
+        try:
+            wrt_info = price_info[sku_id]['wrtInfo']
+        except:
+            wrt_info = None
+        if real_price_promotionList:
+            # 登陆后有优惠政策
+            real_price = real_price_promotionList[0]['price']
+        else:
+            real_price = price_info[sku_id]['price']
+        if wrt_info:
+            # 存在预售的时候 使用预售价格
+            real_price = (wrt_info['finalPayment'] + wrt_info['price']) / 100.00
+        return real_price
 #
 # if __name__ == '__main__':
 #     url = 'https://detail.tmall.com/item.htm?spm=a222t.8750074.6871376497.1.56de14f3UfGY3N&id=578153420589&scene=taobao_shop&skuId=3844563292151'
