@@ -37,6 +37,7 @@ class Processer:
         goods_count = 0
         error_count = 0
         for goods in goods_list:
+            logging.info('now_goods_id:{}'.format(goods.id))
             try:
                 if goods.g_url == None:
                     logging.error('商品url为None goodsid: %s' % str(goods.id))
@@ -54,4 +55,4 @@ class Processer:
             # 随机睡 1~10s TODO 提取工具类
             random_sleep_sec = random.randint(3, 20)
             time.sleep(random_sleep_sec)
-            logging.info('error:{}  ;  success:{} ; now_goods_id:{}'.format(error_count, goods_count, goods.id))
+            logging.info('error:{}  ;  success:{} ; '.format(error_count, goods_count))
