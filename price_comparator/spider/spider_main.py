@@ -20,3 +20,8 @@ def run_program(status_min, status_max):
     logging.info("spider_ending ====")
     # 打印需变更结果
     return True
+
+def cron_program():
+    logging.info("crontab starting =========")
+    run_program(1, 2)
+    logging.info("crontab end =========")

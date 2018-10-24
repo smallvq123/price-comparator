@@ -138,7 +138,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 CRONJOBS = [
-    ('*/1 * * * *', 'spider.spider_main.run_program', '>>./logs/spider/spider.log')
+    ('0 20 * * *', 'spider.spider_main.cron_program', '>>./logs/spider/spider.log')
 ]
 
 # Django的日志配置项
