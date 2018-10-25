@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 
 import os
 
+import mimetypes
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import sys
 
@@ -229,3 +231,9 @@ LOGGING = {
         },
     }
 }
+
+# show the svg on linux
+
+
+mimetypes.add_type("image/svg+xml", ".svg", True)
+mimetypes.add_type("image/svg+xml", ".svgz", True)
