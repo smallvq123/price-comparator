@@ -20,7 +20,7 @@ class AbstractSpider():
 class Processer:
 
     def __needs_update(self, goods):
-        if goods.stock < 50:
+        if goods.stock < 20:
             goods.needs_update = True
         elif (goods.price_moniter == None):
             goods.needs_update = True
