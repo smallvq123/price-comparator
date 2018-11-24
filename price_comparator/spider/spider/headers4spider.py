@@ -24,3 +24,24 @@ headers_price_tmall = {
     'Referer': 'http://detail.tmall.com/item.htm?spm=a220m.1000858.1000725.12.UpuePQ&is_b=1&id=' + str(
         random.randint(15486609514, 15486629514))
 }
+
+headers_innisfree = {
+    'Host': "www.innisfree.cn",
+    'Cookie': '',
+    'User-Agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36",
+    'Referer': 'https://www.innisfree.cn/Product.do?method=productView&seq=' + str(
+        random.randint(1000001222, 1000007222))
+}
+
+headers_etude = {
+    'Host': "www.etude.cn",
+    'Accept': '*/*',
+    'Connection': 'keep-alive',
+    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+    'x-et-token': '1f0eb65a747016868c11018a69d174b2',
+    'Origin': 'http://www.etude.cn',
+    'Cookie': 'WHATAP=x44ikil2ne0cgc; gr_user_id=2863dc9a-aee1-43ad-8509-4d3039fca7ab; grwng_uid=b16ce84c-3020-45bf-a0e6-65f49515bf83; 9a295692db079be1_gr_session_id=ec29703f-f938-48b2-8c8c-7be5dde46968; JSESSIONID=1FBEB6C56886DB3005C8726E8939CD17; 9a295692db079be1_gr_session_id_ec29703f-f938-48b2-8c8c-7be5dde46968=true',
+    'User-Agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36",
+    'Referer': 'http://www.etude.cn/product.html?prdCode=' + str(
+        random.randint(100018520, 100019520))
+}

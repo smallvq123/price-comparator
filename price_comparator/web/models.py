@@ -11,7 +11,9 @@ class Goods(models.Model):
     g_from_choices = (
         (1, "淘宝"),
         (2, "天猫"),
-        (3, "其他（暂未支持）"),
+        (3, "悦诗风吟官网"),
+        (4, "伊穆之屋（暂未支持）"),
+        (-1, "其他（暂未支持）"),
     )
     g_from = models.IntegerField(choices=g_from_choices, default=1, verbose_name=('商品来源'))  #  1，taobao
     g_name = models.CharField(max_length=256, verbose_name=('名称-抓取'), null=True, blank=True, default='')  # 商品名称

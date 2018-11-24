@@ -3,10 +3,16 @@ import decimal
 import logging
 import random
 import time
+import traceback
 
+from ..spider import spider_etude
+from ..spider import spider_innisfree
 from ..spider import spider_taobao, spider_tmall
 
-SPIDER_DICT = {1: spider_taobao.Spider4taobao.spider, 2: spider_tmall.Spider4tmall.spider};
+SPIDER_DICT = {1: spider_taobao.Spider4taobao.spider,
+               2: spider_tmall.Spider4tmall.spider,
+               3: spider_innisfree.Spider4innisfree.spider,
+               4: spider_etude.Spider4etude.spider}
 
 
 # 爬虫抽象基类 根据g_from 决定使用哪个方法
@@ -50,8 +56,11 @@ class Processer:
                     goods_count += 1
                 else:
                     error_count += 1
-            except:
+            except Exception as e:
+                exstr = traceback.format_exc()
+                print exstr
                 error_count += 1
+
             # 随机睡 1~10s TODO 提取工具类
             random_sleep_sec = random.randint(3, 20)
             time.sleep(random_sleep_sec)

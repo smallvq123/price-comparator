@@ -20,7 +20,7 @@ class Spider4taobao:
             req = urllib2.Request(url=url, headers=headers4spider.header_taobao)
             res = urllib2.urlopen(req).read().decode('gbk', 'ignore')
         except Exception as e:
-            print '无法打开网页:', e.reason
+            print 'traceback.format_exc():\n%s' % traceback.format_exc()
             return False
 
         try:
