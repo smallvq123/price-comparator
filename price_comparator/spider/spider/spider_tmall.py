@@ -33,9 +33,6 @@ class Spider4tmall:
             line_price = re.findall('"reservePrice":"(.*?)"', res)[0]
             t = time.time()
             timestamp = (int(round(t * 1000)))
-            # 30-42行为抓取淘宝商品真实价格，该数据是动态加载的
-            # purl = "https://mdskip.taobao.com/core/initItemDetail.htm?isUseInventoryCenter=false&cachedTimestamp={}&itemId={}&callback=setMdskip&timestamp={}".format(
-            #     str(timestamp - 315000), goods_id, timestamp)
             purl = "https://mdskip.taobao.com/core/initItemDetail.htm?isUseInventoryCenter=false&cartEnable=true" \
                    "&service3C=false&isApparel=false&isSecKill=false&tmallBuySupport=true&isAreaSell=false" \
                    "&tryBeforeBuy=false&offlineShop=false&itemId={}&showShopProm=false&isPurchaseMallPage=false" \
@@ -107,7 +104,6 @@ class Spider4tmall:
 class GoodsDTO():
     def __init__(self, url):
         self.g_url = url
-
     g_url = ""
     g_name = ""
     g_custom_name = ""  # 用户自定义名称
@@ -120,7 +116,6 @@ class GoodsDTO():
         return 'g_name:{}, price_lasted:{}, stock:{}'.format(self.g_name, self.price_lasted, self.stock)
 
 
-#
 if __name__ == '__main__':
     import sys
     reload(sys)

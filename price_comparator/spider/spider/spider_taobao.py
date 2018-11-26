@@ -35,7 +35,7 @@ class Spider4taobao:
 
             line_price = re.findall('<em class="tb-rmb-num">(.*?)</em>', res)[0]
 
-            # 30-42行为抓取淘宝商品真实价格，该数据是动态加载的
+            # 抓取淘宝商品真实价格
             purl = "https://detailskip.taobao.com/service/getData/1/p1/item/detail/sib.htm?itemId={}&modules=dynStock,price,xmpPromotion".format(
                 goods_id)
 
@@ -47,7 +47,7 @@ class Spider4taobao:
             real_stock = real_stock[0] if real_stock else None
             logging.info(u'商品名: {} ; 库存: {} ; 划线价格: {} ; 真实价格: {} ; 商品链接: {}'.format(title, real_stock,
                                                                                      line_price, real_price, url))
-            # 45-53行为抓取评论数据，该数据也是动态加载的
+            # 抓取评论数据
             # comment_url = "https://rate.tmall.com/list_detail_rate.htm?itemId={}&sellerId=880734502&currentPage=1".format(
             #     goods_id)
             # comment_data = urllib2.urlopen(comment_url).read().decode("GBK", "ignore")
