@@ -17,7 +17,7 @@ class Processer:
         elif (goods.price_moniter == None):
             goods.needs_update = True
         else:
-            # 价格差异更新阈值 TODO
+            # 价格差异更新阈值
             if abs(decimal.Decimal(str(goods.price_lasted)) - decimal.Decimal(
                     str(goods.price_moniter))) > spider_settings.PRICE_DIFFERENCE_LIMIT:
                 goods.needs_update = True

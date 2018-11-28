@@ -9,10 +9,11 @@ class Goods(models.Model):
     id = models.AutoField(primary_key=True)  #
     g_url = models.CharField(max_length=2048, verbose_name=('商品链接'))  #
     g_from_choices = (
+        (0, "请设置来源"),
         (1, "淘宝"),
         (2, "天猫"),
         (3, "悦诗风吟官网"),
-        (4, "伊穆之屋（暂未支持）"),
+        (4, "伊蒂之屋"),
         (-1, "其他（暂未支持）"),
     )
     g_from = models.IntegerField(choices=g_from_choices, default=1, verbose_name=('商品来源'))  #  1，taobao
@@ -26,6 +27,7 @@ class Goods(models.Model):
         (-2, "下架"),
         (-1, "停止更新"),
         (1, "正常更新"),
+        (2, "自定义状态"),
     )
     status = models.IntegerField(choices=status_choices, default=1, verbose_name=('监控状态'))
     date_created = models.DateTimeField('date created', auto_now_add=True, null=True)
