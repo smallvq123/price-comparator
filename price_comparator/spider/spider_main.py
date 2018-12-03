@@ -23,5 +23,5 @@ def run_program(status_min, status_max):
 
 def cron_program():
     logging.info("crontab starting =========")
-    run_program(1, 2)
+    run_program(-1, 2)
     logging.info("crontab end =========")
